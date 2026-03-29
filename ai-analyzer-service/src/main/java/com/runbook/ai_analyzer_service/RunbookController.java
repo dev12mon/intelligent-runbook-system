@@ -18,4 +18,24 @@ public class RunbookController {
     public List<RunbookEntity> getAllRunbooks() {
         return runbookRepository.findAll();
     }
+    @GetMapping("/payment-issues")
+    public Lust<RunbookEntity> getAllRunbooks(){
+       /* List<RunbookEntity> filterList = new ArrayList<RunbookEntity>();
+        for(RunbookEntity runbook : runbookRepository.getAllRunbooks){
+            if("paymentService".equals(runbook.getServiceName())){
+                filterList.add(runbook);
+            }
+        }*/
+        return runbookRepository.findAll().steam()
+               .filter(runbook -> "paymentService".equals(runbook.getServiceName()))
+               .sorted(Comparator.comparing(RunbookEntity::getCreatedAt).reversed())
+               .collect(Collectors::toList);
+
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<RunbookEntity> getRunBookByID(@PathVarible Long id){
+     return runbookRepository.getRunBookByID(id)
+     .map(runbook -> ResponseEntity.ok().body(runbook))
+     .orElse(() -> ResponseEntity.notFound().build());
+    }
 }
